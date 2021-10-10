@@ -1,0 +1,70 @@
+---
+title: "R cah-kmeans"
+output: html_notebook
+---
+```{r}
+#modifier le répertoire par défaut
+setwd("C:/Users/amine/OneDrive/Desktop/cah_kmeans_avec_r")
+```
+
+```{r}
+#charger les données - attention aux options
+fromage <- read.table(file="fromage.txt",header=T,row.names=1,sep="\t",dec=".")
+```
+
+```{r}
+#afficher les premières lignes
+print(head(fromage))
+```
+```{r}
+#stat. descriptives
+print(summary(fromage))
+```
+```{r}
+#graphique - croisement deux à deux
+pairs(fromage)
+```
+```{r}
+######################################
+# CAH
+######################################
+```
+```{r}
+#centrage réduction des données
+fromage.cr <- scale(fromage,center=T,scale=T)
+```
+
+```{r}
+#distance entre individus
+d.fromage <- dist(fromage.cr)
+```
+
+```{r}
+#CAH - critère de Ward
+cah.ward <- hclust(d.fromage,method="ward.D2")
+```
+
+```{r}
+#affichage dendrogramme
+plot(cah.ward)
+```
+```{r}
+######################################
+# K-MEANS
+######################################
+```
+
+```{r}
+#k-means avec les données centrées et réduites
+#center = 4 - nombre de groupes demandés
+#nstart = 5 - nombre d'essais avec différents individus de départ
+groupes.kmeans <- kmeans(fromage.cr,centers=4,nstart=5)
+
+#affichage des résultats
+print(groupes.kmeans)
+```
+```{r}
+#centrage réduction
+fromage.subset.cr <- scale(fromage.subset,center=T,scale=T)
+```
+

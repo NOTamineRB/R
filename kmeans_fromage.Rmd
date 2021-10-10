@@ -1,0 +1,117 @@
+---
+title: "K-Means sous R - Fichier Fromages"
+output: html_notebook
+---
+
+## Importation et inspection des données
+
+Tout d'abord, chargeons le fichier.
+
+```{r}
+#modifier le dossier par défaut
+setwd("C:/Users/amine/OneDrive/Desktop/R")
+
+#charger les données
+D <- read.table("fromage.txt", sep="\t",dec =".", header = TRUE)
+str(D)
+```
+Affichons les premières lignes.
+
+```{r}
+#afficher les premières lignes
+head(D)
+```
+
+Représentations graphiques.
+
+```{r}
+#nuage de points 2 dernières variables
+plot(D$lipides,D$proteines,main="Nuage de points")
+```
+
+```{r}
+#nuages par paires
+pairs(D)
+```
+
+```{r}
+#moyennes des variables
+print(colMeans(D))
+```
+
+```{r}
+#centrage-réduction
+Z <- scale(D)
+print(colMeans(Z))
+```
+
+```{r}
+#calcul des écarts-type sur les variables transformées
+apply(Z,2,sd)
+```
+## K-Means et interprétations
+
+```{r}
+#k-means avec 2 groupes
+res <- kmeans(Z,centers=2)
+print(res)
+```
+Groupes d'appartenance.
+
+```{r}
+#liste des clusters
+print(res$cluster)
+```
+```{r}
+#effectifs par groupe
+print(table(res$cluster))
+```
+
+```{r}
+#configuration des points
+pairs(D,col=c('green','blue')[res$cluster])
+```
+
+Calcul des moyennes conditionnelles.
+
+```{r}
+#calcul des moyennes conditionnelles
+print(aggregate(x=D,by=list(res$cluster),FUN=mean))
+```
+
+## Détection du nombre de groupes
+
+```{r}
+#identification du nombre de groupes
+BT <- c()
+for (k in 1:10){
+  tmp <- kmeans(Z,centers=k)
+  BT[k] <- tmp$betweenss/tmp$totss
+}
+#affichage
+print(BT)
+```
+```{r}
+#graphique
+plot(1:10,BT,type="b",main="Inertie expliquée vs. nb de groupes")
+```
+
+## Partition en 3 classes
+
+```{r}
+#k-means à 3 classes
+resBis <- kmeans(Z,centers=3)
+print(resBis)
+```
+Graphique.
+
+```{r}
+#configuration des points
+pairs(D,col=c('green','blue','red')[resBis$cluster])
+```
+
+```{r}
+#calcul des moyennes conditionnelles
+print(aggregate(x=D,by=list(resBis$cluster),FUN=mean))
+```
+
